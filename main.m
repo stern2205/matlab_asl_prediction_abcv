@@ -22,7 +22,7 @@ else
 end
 
 % Step 3: Predict using saved image or webcam
-choice = input('Choose mode: 1 - Random Image from Testing, 2 - Webcam: ');
+choice = input('Choose mode: 1 - Random Image from Testing, 2 - Webcam:  3 - Validation: ');
 
 if choice == 1
     % Random image mode from the Testing folder
@@ -73,7 +73,7 @@ elseif choice == 2
     closepreview(vid);
 
     % Resize the captured image to 64x64
-    img1 = imresize(rgb2gray(img1), [64, 64]);
+    img1 = imresize(rgb2gray(img1), [128, 128]);
 
     % Predict using the captured image
     predLabel = classify(net, img1);
@@ -84,6 +84,60 @@ elseif choice == 2
     
     % Clear the webcam object
     clear vid;
+
+elseif choice == 3
+    % Random image mode from each folder in the Testing directory
+    disp('Selecting a random image from each folder in the Testing directory...');
+
+    % Get the path to the Testing folder
+    testFolder = fullfile(datasetPath, 'Testing');
+    
+    % Get a list of all subfolders (directories only)
+    classes = dir(testFolder); 
+    classes = classes([classes.isdir]);  % Filter out non-directory files
+    classes = classes(~ismember({classes.name}, {'.', '..'}));  % Exclude '.' and '..'
+    
+    % Check if the number of folders is exactly 5
+    if numel(classes) ~= 5
+        disp('Error: The Testing folder must contain exactly 5 subfolders.');
+        return;
+    end
+
+    % Create a single figure for displaying all images
+    figure('Name', 'Randomly Selected Images from Each Folder', 'NumberTitle', 'off');
+
+    % Loop through each folder and display the image
+    for i = 1:numel(classes)
+        % Get the path of the current class folder
+        classFolder = fullfile(testFolder, classes(i).name);
+
+        % Get all image files in the current class folder
+        imgFiles = dir(fullfile(classFolder, '*.jpg'));  % Change extension if needed
+
+        % Check if any images were found in the current folder
+        if isempty(imgFiles)
+            disp(['No images found in folder: ', classes(i).name]);
+            continue;
+        end
+        
+        % Randomly select an image file from the current folder
+        randImgIdx = randi(numel(imgFiles));
+        imgPath = fullfile(classFolder, imgFiles(randImgIdx).name);
+        
+        % Display the selected image path
+        disp(['Randomly selected image from folder ', classes(i).name, ': ', imgPath]);
+
+        % Predict the random image
+        img = imread(imgPath);
+        img = imresize(rgb2gray(img), [128, 128]);  % Updated to 128x128
+        predLabel = classify(net, img);
+        
+        % Display the image in the subplot
+        subplot(1, 5, i);  % Arrange in a single row with 5 columns
+        imshow(img);
+        title(['Predicted: ', char(predLabel), ' (', classes(i).name, ')']);
+    end
+ 
 else
     disp('Invalid choice. Please select 1 for random image or 2 for webcam.');
 end
