@@ -29,7 +29,7 @@ Clone or download the GitHub repository to your local machine:
 1. Navigate to the `ASL_Dataset` folder within the repository:
 
     ```bash
-    cd ASL_Recognition/ASL_Dataset
+    cd matlab_asl_prediction_abcv/ASL_Dataset
     ```
 
 2. Inside the `ASL_Dataset` folder, you'll find two subfolders: `Training` and `Testing`.
