@@ -6,6 +6,9 @@ This project is brought to you by
 ## Morales, Johann Daniel P.
 ## CpE-3205
 
+## Project Details
+In this project, I used my initials (J, D, P, M), and B for additional letters.
+
 ## Requirements
 
 Before running the project, make sure you have the following dependencies installed:
