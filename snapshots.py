@@ -2,7 +2,7 @@ import cv2
 import os
 
 # === Settings ===
-num_images = 300
+num_images = 600
 box_size = 480
 output_folder = "snapshots"
 
