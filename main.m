@@ -22,7 +22,7 @@ else
 end
 
 % Step 3: Predict using saved image or webcam
-choice = input('Choose mode: 1 - Random Image from Testing, 2 - Webcam:  3 - Validation: ');
+choice = input('Choose mode: 1 - Random Image from Testing, 2 - Webcam, 3 - Validation, 4 - Live Video: ');
 
 if choice == 1
     % Random image mode from the Testing folder
@@ -138,6 +138,41 @@ elseif choice == 3
         title(['Predicted: ', char(predLabel), ' (', classes(i).name, ')']);
     end
  
+elseif choice == 4
+    % Real-time webcam ASL sign detection
+    disp('Starting real-time ASL sign detection... Press Ctrl+C to stop.');
+
+    % Initialize video input (webcam)
+    vid = videoinput('winvideo', 1, 'YUY2_640x480');
+    set(vid, 'ReturnedColorSpace', 'RGB');
+    vid.FrameGrabInterval = 5; % Skip frames to reduce processing load
+
+    % Create figure for display
+    figure('Name', 'Live ASL Prediction', 'NumberTitle', 'off');
+
+    % Start live capture
+    while ishandle(gcf)
+        % Capture one frame
+        frame = getsnapshot(vid);
+        
+        % Preprocess the frame (convert to grayscale, resize)
+        grayFrame = rgb2gray(frame);
+        resizedFrame = imresize(grayFrame, [128, 128]);
+
+        % Predict the label
+        predLabel = classify(net, resizedFrame);
+
+        % Show the frame and prediction
+        imshow(frame);
+        title(['Predicted Sign: ', char(predLabel)], 'FontSize', 16);
+
+        % Pause briefly to allow GUI update
+        pause(0.1);
+    end
+
+    % Clear the video object when done
+    clear vid;
+
 else
     disp('Invalid choice. Please select 1 for random image or 2 for webcam.');
 end
