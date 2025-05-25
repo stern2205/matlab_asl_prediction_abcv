@@ -1,10 +1,15 @@
 import cv2
 import os
+import time
 
 # === Settings ===
-num_images = 600
+num_images = 50
 box_size = 480
-output_folder = "snapshots"
+base_output_folder = "snapshots"
+
+# === Get user input for folder name ===
+user_folder = input("Enter folder name (e.g., 'A'): ").strip()
+output_folder = os.path.join(base_output_folder, user_folder)
 
 # Create output folder if it doesn't exist
 os.makedirs(output_folder, exist_ok=True)
@@ -16,8 +21,32 @@ if not cap.isOpened():
     print("Error: Cannot access the webcam.")
     exit()
 
+# Show 5-second countdown on camera feed
+start_time = time.time()
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        print("Failed to grab frame.")
+        break
+
+    elapsed = time.time() - start_time
+    remaining = int(5 - elapsed) + 1
+
+    if remaining > 0:
+        # Show countdown on frame
+        text = f"Starting in {remaining}..."
+        cv2.putText(frame, text, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 4)
+        cv2.imshow("Webcam Feed", frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            print("Cancelled during countdown.")
+            cap.release()
+            cv2.destroyAllWindows()
+            exit()
+    else:
+        break
+
 count = 0
-print("Capturing 480x480 images... Press 'q' to quit early.")
+print("Capturing images now. Press 'q' to quit early.")
 
 while count < num_images:
     ret, frame = cap.read()

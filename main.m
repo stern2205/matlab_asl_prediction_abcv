@@ -6,7 +6,7 @@ currentFolder = fileparts(mfilename('fullpath'));
 
 % Construct the full dataset path based on the script's location
 datasetPath = fullfile(currentFolder, 'ASL_Dataset');
-modelFile = 'ASL_ABC_CNN.mat';
+modelFile = 'ASL_ABC_CNN1.mat';
 
 % Check if the model file exists
 if isfile(modelFile)
